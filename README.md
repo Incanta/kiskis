@@ -15,9 +15,58 @@ Files are encrypted in the browser before upload using AES-256-GCM. The server o
 
 ## Requirements
 
-- Node.js 24 or newer (uses the built-in `node:sqlite` module).
+- Node.js 24 or newer (uses the built-in `node:sqlite` module), **or** Docker.
 
-## Setup
+## Quickstart
+
+### Docker
+
+Multi-arch images (`linux/amd64`, `linux/arm64`) are published to GHCR on every push to `main` and on tagged releases.
+
+```bash
+docker run -d \
+  --name kiskis \
+  -p 8787:8787 \
+  -e ADMIN_PASSWORD=change-me \
+  -v kiskis-data:/data \
+  ghcr.io/incanta/kiskis:latest
+```
+
+Visit `http://localhost:8787/admin` to sign in and create an upload token.
+
+### Docker Compose
+
+Save the following as `compose.yaml`:
+
+```yaml
+services:
+  kiskis:
+    image: ghcr.io/incanta/kiskis:latest
+    container_name: kiskis
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      # SECURE_COOKIES: "true"     # enable when serving over HTTPS
+      # MAX_FILE_BYTES: "2147483648"
+    volumes:
+      - kiskis-data:/data
+
+volumes:
+  kiskis-data:
+```
+
+Create a `.env` next to it (Compose auto-loads it) and start:
+
+```bash
+echo "ADMIN_PASSWORD=change-me" > .env
+docker compose up -d
+```
+
+To update later: `docker compose pull && docker compose up -d`.
+
+### From source
 
 ```bash
 cp .env.example .env
