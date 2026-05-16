@@ -39,6 +39,28 @@ Visit `http://localhost:8787/admin` to sign in and create an upload token.
 | `SECURE_COOKIES` | `false` | Set to `true` when serving over HTTPS. |
 | `MAX_FILE_BYTES` | `2147483648` | Plaintext size cap. Hard-clamped at 2 GiB. |
 
+## Screenshots
+
+Upload requires an admin-provisioned auth token to prevent unwanted usage:
+
+![Auth token required](./img/auth-token-required.png)
+
+Admin interface:
+
+![Admin interface](./img/admin.png)
+
+Upload interface:
+
+![Upload interface](./img/upload.png)
+
+Client-side password protection:
+
+![Password protection](./img/password.png)
+
+Download interface:
+
+![Download interface](./img/download.png)
+
 ## Security model
 
 - The decryption key never reaches the server. It is generated in the browser, encoded into the URL fragment (`#k1.<key>` or `#p1.<salt>.<wrapNonce>.<wrappedKey>`), and browsers do not send fragments in HTTP requests.
