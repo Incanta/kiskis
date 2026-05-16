@@ -1,0 +1,108 @@
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Keep It Secret, Keep It Safe — share a file</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1><span class="mage" aria-hidden="true">🧙‍♂️</span> Keep It Secret, Keep It Safe.</h1>
+  </header>
+
+  <main>
+    <section id="token-panel" class="card" hidden>
+      <h2>Upload token</h2>
+      <p class="muted">An admin must provide you with an upload token. It is stored only in this browser's localStorage.</p>
+      <label>
+        <span>Token</span>
+        <input id="token-input" type="password" autocomplete="off" spellcheck="false" />
+      </label>
+      <div class="row">
+        <button id="token-save" type="button">Save token</button>
+        <button id="token-clear" type="button" class="secondary">Clear stored token</button>
+      </div>
+      <p id="token-error" class="error" hidden></p>
+    </section>
+
+    <section id="upload-panel" class="card" hidden>
+      <div class="token-bar">
+        <span id="token-info" class="muted"></span>
+        <button id="token-logout" type="button" class="secondary small">Sign out</button>
+      </div>
+      <div id="drop-zone" class="drop-zone">
+        <p><strong>Drop a file here</strong> or</p>
+        <label class="button">
+          <input id="file-input" type="file" hidden />
+          Choose file
+        </label>
+        <p id="file-info" class="muted"></p>
+      </div>
+
+      <form id="upload-form" autocomplete="off">
+        <label>
+          <span>Password (optional)</span>
+          <input id="password-input" type="password" autocomplete="new-password" />
+        </label>
+
+        <div class="grid-2">
+          <label>
+            <span>Max downloads</span>
+            <select id="max-downloads">
+              <option value="1">1</option>
+              <option value="5" selected>5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Expires after</span>
+            <select id="ttl">
+              <option value="3600">1 hour</option>
+              <option value="18000">5 hours</option>
+              <option value="86400">1 day</option>
+              <option value="604800" selected>7 days</option>
+              <option value="2592000">30 days</option>
+              <option value="31536000">365 days</option>
+            </select>
+          </label>
+        </div>
+
+        <button id="upload-button" type="submit" disabled>Encrypt &amp; upload</button>
+      </form>
+
+      <div id="progress-wrap" hidden>
+        <div class="progress"><div id="progress-bar" class="progress-bar"></div></div>
+        <p id="progress-text" class="muted"></p>
+      </div>
+
+      <p id="upload-error" class="error" hidden></p>
+
+      <div id="result" hidden>
+        <h2>Share link</h2>
+        <p class="muted">The decryption key is in the <code>#</code> fragment — the server never sees it.</p>
+        <div class="row">
+          <input id="share-link" type="text" readonly />
+          <button id="copy-button" type="button">Copy</button>
+        </div>
+        <p id="copy-status" class="muted"></p>
+        <p><a id="upload-again" href="#">Upload another</a></p>
+      </div>
+    </section>
+
+    <nav class="footer-nav">
+      <a href="/admin">admin</a>
+      &middot;
+      <a href="https://github.com/incanta/kiskis" target="_blank" rel="noopener noreferrer">source</a>
+    </nav>
+  </main>
+
+  <script type="module" src="/js/upload.js"></script>
+</body>
+</html>

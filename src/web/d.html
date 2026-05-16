@@ -1,0 +1,57 @@
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Keep It Secret, Keep It Safe — download</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1><span class="mage" aria-hidden="true">🧙‍♂️</span> Keep It Secret, Keep It Safe.</h1>
+  </header>
+
+  <main>
+    <section id="status-panel" class="card">
+      <p id="status-text">Loading…</p>
+      <p id="status-error" class="error" hidden></p>
+    </section>
+
+    <section id="password-panel" class="card" hidden>
+      <h2>This file is password-protected</h2>
+      <form id="password-form">
+        <label>
+          <span>Password</span>
+          <input id="password-input" type="password" autocomplete="off" autofocus />
+        </label>
+        <button type="submit">Unlock</button>
+      </form>
+    </section>
+
+    <section id="confirm-panel" class="card" hidden>
+      <h2 id="file-name"></h2>
+      <p id="file-details" class="muted"></p>
+      <p id="file-quota" class="muted"></p>
+      <p class="warn">
+        Downloading consumes one of this file's allowed downloads, even if you cancel.
+      </p>
+      <button id="download-button" type="button">Download</button>
+    </section>
+
+    <section id="download-panel" class="card" hidden>
+      <h2 id="download-name"></h2>
+      <div class="progress"><div id="dl-bar" class="progress-bar"></div></div>
+      <p id="dl-text" class="muted"></p>
+    </section>
+
+    <nav class="footer-nav">
+      <a href="/">upload</a>
+      &middot;
+      <a href="https://github.com/incanta/kiskis" target="_blank" rel="noopener noreferrer">source</a>
+    </nav>
+  </main>
+
+  <script type="module" src="/js/download.js"></script>
+</body>
+</html>

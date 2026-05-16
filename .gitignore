@@ -1,0 +1,10 @@
+node_modules/
+dist/
+data/
+.env
+.env.local
+src/web/js/
+*.log
+.DS_Store
+Thumbs.db
+.yarn

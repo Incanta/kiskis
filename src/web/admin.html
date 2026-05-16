@@ -1,0 +1,88 @@
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Keep It Secret, Keep It Safe — admin</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1><span class="mage" aria-hidden="true">🧙‍♂️</span> Keep It Secret, Keep It Safe.</h1>
+  </header>
+
+  <main>
+    <section id="login-panel" class="card" hidden>
+      <h2>Sign in</h2>
+      <form id="login-form" autocomplete="off">
+        <label>
+          <span>Admin password</span>
+          <input id="admin-password" type="password" autofocus />
+        </label>
+        <button type="submit">Sign in</button>
+      </form>
+      <p id="login-error" class="error" hidden></p>
+    </section>
+
+    <section id="dashboard" class="card" hidden>
+      <div class="row between">
+        <h2>Upload tokens</h2>
+        <button id="logout-button" type="button" class="secondary">Sign out</button>
+      </div>
+
+      <form id="create-form" autocomplete="off">
+        <div class="grid-2">
+          <label>
+            <span>Label (optional)</span>
+            <input id="token-label" type="text" maxlength="200" />
+          </label>
+          <label>
+            <span>Lifetime</span>
+            <select id="token-ttl">
+              <option value="86400">1 day</option>
+              <option value="604800" selected>7 days</option>
+              <option value="2592000">30 days</option>
+              <option value="31536000">365 days</option>
+            </select>
+          </label>
+        </div>
+        <button type="submit">Create token</button>
+      </form>
+
+      <div id="created-token" class="card success" hidden>
+        <h3>New token</h3>
+        <p class="muted">Copy this now — it will not be shown again.</p>
+        <div class="row">
+          <input id="created-token-value" type="text" readonly />
+          <button id="copy-created" type="button">Copy</button>
+        </div>
+      </div>
+
+      <p id="dashboard-error" class="error" hidden></p>
+
+      <table id="tokens-table">
+        <thead>
+          <tr>
+            <th>Label</th>
+            <th>ID prefix</th>
+            <th>Created</th>
+            <th>Expires</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tokens-body"></tbody>
+      </table>
+    </section>
+
+    <nav class="footer-nav">
+      <a href="/">upload</a>
+      &middot;
+      <a href="https://github.com/incanta/kiskis" target="_blank" rel="noopener noreferrer">source</a>
+    </nav>
+  </main>
+
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>
