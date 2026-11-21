@@ -60,3 +60,68 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
+
+      # Asks Komodo to redeploy this service, then waits for the result so a
+      # failed deploy fails this run. Goes through Cloudflare Access with a
+      # service token. Only runs for main, since that's what updates `latest`.
+      # Skipped until the KOMODO_URL secret is set.
+      - name: Deploy with Komodo
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          KOMODO_URL: ${{ secrets.KOMODO_URL }}
+          KOMODO_STACK: ${{ vars.KOMODO_STACK }}
+          # JSON list of compose services to redeploy; [] redeploys the whole stack.
+          KOMODO_SERVICES: '["kiskis"]'
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          KOMODO_API_KEY: ${{ secrets.KOMODO_API_KEY }}
+          KOMODO_API_SECRET: ${{ secrets.KOMODO_API_SECRET }}
+        run: |
+          set -euo pipefail
+
+          # A secret, not a variable, so the hostname is masked in logs. `if:` can't
+          # read secrets, so the "not set up yet" check lives here.
+          if [ -z "${KOMODO_URL:-}" ]; then
+            echo "KOMODO_URL secret not set, skipping deploy"
+            exit 0
+          fi
+
+          api() {
+            curl --silent --show-error --fail-with-body --max-time 60 \
+              -X POST "${KOMODO_URL%/}/$1" \
+              -H "Content-Type: application/json" \
+              -H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" \
+              -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" \
+              -H "X-Api-Key: $KOMODO_API_KEY" \
+              -H "X-Api-Secret: $KOMODO_API_SECRET" \
+              --data "$2"
+          }
+
+          body=$(jq -nc --arg stack "$KOMODO_STACK" --argjson services "$KOMODO_SERVICES" \
+            '{stack: $stack, services: $services}')
+          update=$(api execute/DeployStack "$body")
+
+          id=$(jq -r '(.id // (._id | if type == "object" then ."$oid" else . end)) // empty' <<<"$update")
+          if [ -z "$id" ]; then
+            echo "::warning::Komodo accepted the deploy but returned no update id to follow:"
+            echo "$update"
+            exit 0
+          fi
+          echo "Komodo update $id started"
+
+          for _ in $(seq 1 60); do
+            sleep 10
+            update=$(api read/GetUpdate "$(jq -nc --arg id "$id" '{id: $id}')")
+            done=$(jq -r 'if .status == "Complete" or (.end_ts // 0) > 0 then "yes" else "no" end' <<<"$update")
+            [ "$done" = yes ] || continue
+            if [ "$(jq -r '.success' <<<"$update")" = true ]; then
+              echo "Deploy succeeded"
+              exit 0
+            fi
+            echo "::error::Komodo deploy failed"
+            jq -r '.logs[]? | "--- \(.stage // "")\n\(.stdout // "")\n\(.stderr // "")"' <<<"$update"
+            exit 1
+          done
+
+          echo "::error::Timed out after 10 minutes waiting for Komodo update $id"
+          exit 1
